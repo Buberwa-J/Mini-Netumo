@@ -62,6 +62,8 @@ The `docker-compose.yml` file defines the following key services:
 
 ### Architectural Diagram
 
+![The system architecture](demos/architecture.png)
+
 This diagram illustrates the flow of a user request and a background monitoring job:
 
 ## ⚙️ Configuration
