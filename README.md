@@ -66,7 +66,7 @@ The `docker-compose.yml` file defines the following key services:
 
 This diagram illustrates the flow of a user request and a background monitoring job:
 
-## ⚙️ Configuration
+## Configuration
 
 The application's behavior can be customized via environment variables in the `.env` file.
 
@@ -167,7 +167,7 @@ You should now be able to access the application at [http://localhost](http://lo
 -   If containers fail to start, check the logs for errors: `docker-compose logs -f app1` or `docker-compose logs -f nginx`.
 -   Permission errors in the `storage` or `bootstrap/cache` directories can often be fixed by running `docker-compose exec app1 chown -R www-data:www-data storage bootstrap/cache`.
 
-## 🛣️ Roadmap
+## Roadmap
 
 Here are some of the features and improvements we are planning:
 
@@ -210,6 +210,6 @@ Mini-Netumo is designed for an intuitive workflow that guides you from setup to 
 
 This project was built by a team of developers. Contributions, issues, and feature requests are welcome!
 
-## 📄 License
+## License
 
 This project is open-sourced under the MIT license.
