@@ -93,7 +93,7 @@ MAIL_FROM_ADDRESS=your-email@domain.com
 MAIL_FROM_NAME="Mini-Netumo Monitoring"
 ```
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 This project is built with a modern tech stack, ensuring performance and scalability.
 
