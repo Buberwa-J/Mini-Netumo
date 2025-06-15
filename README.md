@@ -9,7 +9,7 @@
 
 **Mini-Netumo** is a robust, open-source monitoring solution designed to provide real-time insights into the health of your web services. It empowers users to proactively track website uptime and SSL certificate status through a clean, intuitive dashboard.
 
-Born from a need for a reliable and scalable monitoring tool, Mini-Netumo is built on a modern, high-availability architecture using Docker, making it perfect for developers, system administrators, and businesses who demand high reliability from their own services.
+Born from a need for a reliable and scalable monitoring tool, Mini-Netumo is built on a modern, high-availability architecture using Docker, making it perfect for developers, system administrators, and businesses who demand high reliability from their own services. Our design philosophy prioritizes **stability, simplicity, and low operational overhead** - delivering essential monitoring capabilities without the complexity and cost of enterprise-grade platforms.
 
 It can be viewed at http://185.181.11.156/
 
@@ -25,11 +25,11 @@ Mini-Netumo provides a comprehensive suite of monitoring tools. Here's a more de
 
 -   **SSL Certificate Monitoring**: To prevent security warnings and loss of user trust, Mini-Netumo automatically checks the SSL certificates of your `https` targets. It fetches the certificate and verifies two key aspects: its overall validity (is it trusted and correctly installed?) and its expiration date. Alerts are triggered for invalid certificates and for valid certificates that are nearing their expiration date (configurable via `.env`).
 
--   **Intelligent Alerting**: If a check fails, an alert is instantly generated. The system is smart enough to create only one "active" alert per issue. For example, if a site is down, it creates one downtime alert. When the site comes back online, that alert is automatically marked as "resolved." This prevents a flood of notifications for the same ongoing issue.
-
 -   **Historical Data & Insights**: Dive into the history of any target to see a detailed log of its uptime and SSL checks. This data is invaluable for performance analysis, diagnosing recurring issues, and generating SLA reports.
 
 -   **Manual Checks**: Don't want to wait for the next five-minute cycle? You can trigger a manual check for any target at any time. This check bypasses the queue and is executed immediately, giving you instant feedback on a target's current status.
+
+-   **Email Notifications**: When an alert is triggered (e.g., a site goes down or an SSL certificate is about to expire), Mini-Netumo automatically sends clear, direct email notifications via SMTP to your registered address. The system uses universal SMTP standards, making it compatible with any email provider without complex API integrations.
 
 ## System Architecture
 
@@ -76,6 +76,22 @@ The application's behavior can be customized via environment variables in the `.
 | `DB_CONNECTION`             | `mysql`            | The database connection to use.                                                                |
 | `QUEUE_CONNECTION`          | `database`         | The driver for the queue system. `database` is reliable and simple. `redis` is also an option. |
 | `SSL_EXPIRY_THRESHOLD_DAYS` | `14`               | The number of days before an SSL certificate's expiration to trigger a warning alert.          |
+| `MAIL_MAILER`               | `smtp`             | Email driver for notifications. Configure with your SMTP provider credentials.                 |
+
+### Email Configuration
+
+To enable email notifications, configure these additional environment variables:
+
+```env
+MAIL_MAILER=smtp
+MAIL_HOST=your-smtp-server.com
+MAIL_PORT=587
+MAIL_USERNAME=your-email@domain.com
+MAIL_PASSWORD=your-password
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=your-email@domain.com
+MAIL_FROM_NAME="Mini-Netumo Monitoring"
+```
 
 ## 🛠️ Tech Stack
 
@@ -85,6 +101,15 @@ This project is built with a modern tech stack, ensuring performance and scalabi
 -   **Web Server**: Nginx (acting as a load balancer and reverse proxy)
 -   **Frontend**: Tailwind CSS, Alpine.js, Blade Templates
 -   **Containerization**: Docker & Docker Compose
+-   **Notifications**: SMTP-based email alerts (universal compatibility)
+
+## Design Philosophy
+
+Our architectural decisions are guided by three core principles:
+
+-   **Stability Over Complexity**: We chose proven, battle-tested technologies like MySQL and SMTP over newer alternatives to ensure reliable operation
+-   **Simplicity in Deployment**: Single-VM deployment with Docker Compose eliminates cloud complexity while maintaining scalability
+-   **Low Operational Overhead**: Database-driven queues and server-side rendering reduce dependencies and maintenance burden
 
 ## Getting Started
 
@@ -146,11 +171,40 @@ You should now be able to access the application at [http://localhost](http://lo
 
 Here are some of the features and improvements we are planning:
 
--   **Advanced Notifications**: Integration with services like Slack, Telegram, and email to send real-time alerts.
--   **Performance Graphing**: Visualize response time data with historical graphs to spot performance degradation.
+-   **Advanced Notifications**: Integration with services like Slack, Telegram, and webhooks for richer alert delivery
+-   **Performance Graphing**: Visualize response time data with historical graphs to spot performance degradation
 -   **Advanced Check Types**:
-    -   TCP Port Monitoring (e.g., check if a database port is open).
-    -   DNS record validation.
+    -   TCP Port Monitoring (e.g., check if a database port is open)
+    -   DNS record validation
+    -   Custom HTTP headers and authentication
+-   **Data Management**: Automated log pruning and retention policies to manage storage growth
+-   **Enhanced Reliability**: Distributed scheduling to eliminate single points of failure
+
+## Security & Reliability
+
+Mini-Netumo implements several measures to ensure secure and reliable operation:
+
+-   **Laravel Security Best Practices**: Built-in protection against SQL injection, XSS, and CSRF attacks
+-   **Containerized Isolation**: Each service runs in its own container with minimal attack surface
+-   **High Availability Architecture**: Load-balanced application containers ensure continued operation if one fails
+-   **Automated Recovery**: Queue workers automatically restart on failure to maintain monitoring continuity
+
+For production deployment, ensure:
+
+-   Secure `.env` file permissions (600 or stricter)
+-   Regular security updates for dependencies
+-   Proper firewall configuration limiting external access
+
+## User Journey
+
+Mini-Netumo is designed for an intuitive workflow that guides you from setup to proactive issue resolution:
+
+1. **Quick Onboarding**: Register an account and add your first monitoring target through a clean, minimalist interface
+2. **Automated Peace of Mind**: Within 5 minutes, see your first monitoring results as the system begins 24/7 automated checks
+3. **Instant Verification**: Use the "Check Now" feature for immediate feedback after deployments or changes
+4. **Proactive Alerting**: Receive instant email notifications when issues occur, with clear status indicators on your dashboard
+5. **Easy Investigation**: Access detailed historical logs to pinpoint exactly when issues began and track resolution
+6. **Automatic Recovery**: Watch alerts automatically resolve when services come back online, with complete incident history preserved
 
 ## Contributing
 
