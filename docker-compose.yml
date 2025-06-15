@@ -1,0 +1,178 @@
+version: '3.9'
+
+networks:
+  mini_netumo_network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+    driver: local
+
+services:
+  # Load Balancer (Nginx)
+  loadbalancer:
+    image: nginx:1.25-alpine
+    container_name: mininetumo-loadbalancer
+    ports:
+      - "80:80" # Host port 80 to container port 80
+      - "443:443" # If you add SSL later
+    volumes:
+      - ./docker/nginx/loadbalancer.conf:/etc/nginx/conf.d/default.conf:ro
+      # - ./docker/ssl:/etc/nginx/ssl:ro # For SSL certificates later
+    depends_on:
+      - web1
+      - web2
+    networks:
+      - mini_netumo_network
+    restart: unless-stopped
+
+  # Web Server Instance 1 (Nginx)
+  web1:
+    image: nginx:1.25-alpine
+    container_name: mininetumo-web1
+    environment:
+      INSTANCE_ID: web1 # For instance indicator
+    volumes:
+      - ./:/var/www/html:cached
+      - ./docker/nginx/web1.conf:/etc/nginx/conf.d/default.conf:ro
+    # Use envsubst to replace APP_FPM_HOST in the Nginx config template
+    command: nginx -g 'daemon off;'
+    depends_on:
+      - app1
+    networks:
+      - mini_netumo_network
+    restart: unless-stopped
+
+  # Web Server Instance 2 (Nginx)
+  web2:
+    image: nginx:1.25-alpine
+    container_name: mininetumo-web2
+    environment:
+      INSTANCE_ID: web2 # For instance indicator
+    volumes:
+      - ./:/var/www/html:cached
+      - ./docker/nginx/web2.conf:/etc/nginx/conf.d/default.conf:ro
+    command: nginx -g 'daemon off;'
+    depends_on:
+      - app2
+    networks:
+      - mini_netumo_network
+    restart: unless-stopped
+
+  # PHP-FPM Application Instance 1
+  app1:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+      args:
+        USER_ID: 1000 # Use host user ID, default to 1000
+        GROUP_ID: 1000 # Use host group ID, default to 1000
+    container_name: mininetumo-app1
+    environment:
+      IS_PRIMARY_APP_INSTANCE: "true" # For running migrations
+      INSTANCE_ID: app1 # For instance indicator
+      # Environment variables will be loaded from .env.docker (see next steps)
+      # Example (these should be in your .env.docker):
+      # APP_NAME: "Mini-Netumo"
+      # APP_ENV: "local" # or production
+      # APP_KEY: "${APP_KEY}" # Ensure this is set correctly, ideally from an .env file used by compose
+      # APP_DEBUG: "true"
+      # APP_URL: "http://localhost" # This will be the load balancer URL
+      # DB_CONNECTION: "mysql"
+      # DB_HOST: "db"
+      # DB_PORT: "3306"
+      # DB_DATABASE: "${DB_DATABASE}"
+      # DB_USERNAME: "${DB_USERNAME}"
+      # DB_PASSWORD: "${DB_PASSWORD}"
+      # QUEUE_CONNECTION: "database"
+      # SESSION_DRIVER: "database"
+      # CACHE_STORE: "database"
+      # MAIL_MAILER: "smtp"
+      # MAIL_HOST: "smtp.gmail.com"
+      # MAIL_PORT: "587"
+      # MAIL_USERNAME: "${MAIL_USERNAME}"
+      # MAIL_PASSWORD: "${MAIL_PASSWORD}"
+      # MAIL_ENCRYPTION: "tls"
+      # MAIL_FROM_ADDRESS: "${MAIL_FROM_ADDRESS}"
+      # MAIL_FROM_NAME: "${APP_NAME}"
+    env_file:
+      - .env.docker # We will create this file based on your .env
+    volumes:
+      - ./:/var/www/html:cached
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - mini_netumo_network
+    restart: unless-stopped
+
+  # PHP-FPM Application Instance 2
+  app2:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+      args:
+        USER_ID: 1000
+        GROUP_ID: 1000
+    container_name: mininetumo-app2
+    environment:
+      IS_PRIMARY_APP_INSTANCE: "false"
+      INSTANCE_ID: app2 # For instance indicator
+    env_file:
+      - .env.docker
+    volumes:
+      - ./:/var/www/html:cached
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - mini_netumo_network
+    restart: unless-stopped
+
+  # Queue Worker
+  worker:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+      args:
+        USER_ID: 1000
+        GROUP_ID: 1000
+    container_name: mininetumo-worker
+    command: ["php", "artisan", "queue:work", "--sleep=3", "--tries=3", "--timeout=3600"]
+    environment:
+      INSTANCE_ID: worker # For instance indicator
+    env_file:
+      - .env.docker
+    volumes:
+      - ./:/var/www/html:cached
+    depends_on:
+      db:
+        condition: service_healthy
+      app1: # Depends on app image being built, not necessarily running
+        condition: service_started
+    networks:
+      - mini_netumo_network
+    restart: unless-stopped
+
+  # Database (MySQL)
+  db:
+    image: mysql:8.0
+    container_name: mininetumo-db
+    ports:
+      # Map host port 33061 to container port 3306 to avoid conflict with potential local MySQL
+      # If your local port 3306 is free, you can use "3306:3306"
+      - "33061:3306"
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}       # From .env.docker
+      MYSQL_USER: ${DB_USERNAME}           # From .env.docker
+      MYSQL_PASSWORD: ${DB_PASSWORD}       # From .env.docker
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-YourStrongRootPasswordPleaseChange} # Set in .env.docker or here
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - mini_netumo_network
+    healthcheck:
+        test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-u$${DB_USERNAME}", "-p$${DB_PASSWORD}"]
+        timeout: 20s
+        retries: 10
+    restart: unless-stopped 
