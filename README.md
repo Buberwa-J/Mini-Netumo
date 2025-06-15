@@ -13,7 +13,7 @@ Born from a need for a reliable and scalable monitoring tool, Mini-Netumo is bui
 
 It can be viewed at http://185.181.11.156/
 
-## ✅ Core Functionality
+## Core Functionality
 
 Mini-Netumo provides a comprehensive suite of monitoring tools. Here's a more detailed look at how it keeps you informed:
 
@@ -31,7 +31,7 @@ Mini-Netumo provides a comprehensive suite of monitoring tools. Here's a more de
 
 -   **Manual Checks**: Don't want to wait for the next five-minute cycle? You can trigger a manual check for any target at any time. This check bypasses the queue and is executed immediately, giving you instant feedback on a target's current status.
 
-## 🏗️ System Architecture
+## System Architecture
 
 This project isn't just a Laravel application; it's a scalable, containerized system designed for high availability and resilience. We use Docker and Docker Compose to orchestrate a multi-container environment that separates concerns and eliminates single points of failure.
 
@@ -86,7 +86,7 @@ This project is built with a modern tech stack, ensuring performance and scalabi
 -   **Frontend**: Tailwind CSS, Alpine.js, Blade Templates
 -   **Containerization**: Docker & Docker Compose
 
-## 🚀 Getting Started
+## Getting Started
 
 To get a local copy up and running, follow these simple steps.
 
@@ -152,7 +152,7 @@ Here are some of the features and improvements we are planning:
     -   TCP Port Monitoring (e.g., check if a database port is open).
     -   DNS record validation.
 
-## 🤝 Contributing
+## Contributing
 
 This project was built by a team of developers. Contributions, issues, and feature requests are welcome!
 
