@@ -2,7 +2,7 @@
   <img src="public/favicon.svg" alt="Mini-Netumo Logo" width="100"/>
   <h1>Mini-Netumo</h1>
   <p><strong>A powerful, open-source, and scalable website monitoring solution.</strong></p>
-  <p>Built with ❤️ by a collaborative team.</p>
+  <p>Built with lots of Love </p>
 </div>
 
 ---
