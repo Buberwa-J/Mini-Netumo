@@ -11,7 +11,7 @@
 
 Born from a need for a reliable and scalable monitoring tool, Mini-Netumo is built on a modern, high-availability architecture using Docker, making it perfect for developers, system administrators, and businesses who demand high reliability from their own services. Our design philosophy prioritizes **stability, simplicity, and low operational overhead** - delivering essential monitoring capabilities without the complexity and cost of enterprise-grade platforms.
 
-It can be viewed at http://185.181.11.156/ (Note: Demo link is currently inactive due to cloud hosting trial expiration)
+It can be viewed at http://185.181.11.156/ _(Note: Link is currently inactive)_
 
 ## Screenshots
 
