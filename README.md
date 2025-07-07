@@ -11,13 +11,56 @@
 
 Born from a need for a reliable and scalable monitoring tool, Mini-Netumo is built on a modern, high-availability architecture using Docker, making it perfect for developers, system administrators, and businesses who demand high reliability from their own services. Our design philosophy prioritizes **stability, simplicity, and low operational overhead** - delivering essential monitoring capabilities without the complexity and cost of enterprise-grade platforms.
 
-It can be viewed at http://185.181.11.156/
+~~It can be viewed at http://185.181.11.156/~~ _(Note: Demo link is currently inactive due to cloud hosting trial expiration)_
+
+## Screenshots
+
+### Landing Page & User Interface
+
+<div align="center">
+  <img src="screenshots/landing page.png" alt="Mini-Netumo Landing Page" width="600"/>
+  <p><em>Welcome to Mini-Netumo - Clean and professional landing page</em></p>
+</div>
+
+<div align="center">
+  <img src="screenshots/landing page 2.png" alt="Mini-Netumo Features Overview" width="600"/>
+  <p><em>Feature overview and value proposition</em></p>
+</div>
+
+### Authentication
+
+<div align="center">
+  <img src="screenshots/create account.png" alt="User Registration" width="600"/>
+  <p><em>Simple and secure user registration process</em></p>
+</div>
+
+<div align="center">
+  <img src="screenshots/log in.png" alt="User Login" width="600"/>
+  <p><em>Clean login interface</em></p>
+</div>
+
+### Main Dashboard
+
+<div align="center">
+  <img src="screenshots/dashboard with targets and alerts.png" alt="Main Dashboard" width="600"/>
+  <p><em>Comprehensive dashboard showing targets and alerts at a glance</em></p>
+</div>
 
 ## Core Functionality
 
 Mini-Netumo provides a comprehensive suite of monitoring tools. Here's a more detailed look at how it keeps you informed:
 
 -   **Target Management**: Easily add, edit, or remove any number of websites or endpoints you wish to monitor. The system accepts any valid URL (e.g., `https://my-api.com`, `http://my-blog.org`). Each target is stored with its own monitoring history and settings.
+
+    <div align="center">
+      <img src="screenshots/targets index.png" alt="Targets Overview" width="600"/>
+      <p><em>Targets index page showing all monitored websites with their current status</em></p>
+    </div>
+
+    <div align="center">
+      <img src="screenshots/target create.png" alt="Add New Target" width="600"/>
+      <p><em>Simple form to add new monitoring targets</em></p>
+    </div>
 
 -   **Automated Health Checks**: Once a target is added, Mini-Netumo's automated scheduler gets to work. Leveraging Laravel's built-in scheduler, it queues up jobs to check every single target every five minutes. These jobs are processed asynchronously by a dedicated background worker, ensuring the user interface remains fast and responsive, even with hundreds of targets.
 
@@ -27,9 +70,19 @@ Mini-Netumo provides a comprehensive suite of monitoring tools. Here's a more de
 
 -   **Historical Data & Insights**: Dive into the history of any target to see a detailed log of its uptime and SSL checks. This data is invaluable for performance analysis, diagnosing recurring issues, and generating SLA reports.
 
+    <div align="center">
+      <img src="screenshots/target show.png" alt="Target Details" width="600"/>
+      <p><em>Detailed target view showing monitoring history and current status</em></p>
+    </div>
+
 -   **Manual Checks**: Don't want to wait for the next five-minute cycle? You can trigger a manual check for any target at any time. This check bypasses the queue and is executed immediately, giving you instant feedback on a target's current status.
 
 -   **Email Notifications**: When an alert is triggered (e.g., a site goes down or an SSL certificate is about to expire), Mini-Netumo automatically sends clear, direct email notifications via SMTP to your registered address. The system uses universal SMTP standards, making it compatible with any email provider without complex API integrations.
+
+    <div align="center">
+      <img src="screenshots/alert show.png" alt="Alert Details" width="600"/>
+      <p><em>Alert detail view showing incident information and status changes</em></p>
+    </div>
 
 ## System Architecture
 
